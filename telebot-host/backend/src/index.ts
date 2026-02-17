@@ -15,6 +15,19 @@ const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgr
 export const pool = new Pool({ connectionString });
 
 async function initDB() {
+  let retries = 5;
+  while (retries > 0) {
+    try {
+      await pool.query('SELECT 1');
+      break;
+    } catch (err) {
+      retries--;
+      console.log(`DB connection failed, retrying... (${retries} left)`);
+      await new Promise(res => setTimeout(res, 3000));
+      if (retries === 0) throw err;
+    }
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
@@ -41,11 +54,12 @@ app.use('/api/bots', botRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+
 initDB()
   .then(() => {
-    app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+    console.log('Database initialized successfully');
   })
   .catch((err) => {
     console.error('DB init failed', err);
-    process.exit(1);
   });
