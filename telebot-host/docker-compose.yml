@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: telebotdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    image: telebot-backend:latest
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  frontend:
+    build: ./frontend
+    image: telebot-frontend:latest
+    restart: unless-stopped
+    env_file: ./.env.example
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  bot-engine:
+    build: ./bot-engine
+    image: telebot-engine:latest
+    restart: unless-stopped
+    # this service is only used as image template for containers created by backend
+
+volumes:
+  db-data:
