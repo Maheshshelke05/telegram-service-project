@@ -36,7 +36,8 @@ services:
   bot-engine:
     build: ./bot-engine
     image: telebot-engine:latest
-    restart: unless-stopped
+    restart: "no"
+    command: ["sh", "-c", "echo 'Bot engine image built. This container is a template and will not run.' && exit 0"]
     # this service is only used as image template for containers created by backend
 
 volumes:
