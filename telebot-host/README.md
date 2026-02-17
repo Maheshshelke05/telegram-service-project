@@ -2,10 +2,21 @@
 
 Production-ready SaaS to create, deploy and manage Telegram bots using Docker.
 
-Run locally:
+Run locally (one-command bootstrap):
+
+On Linux (supports Ubuntu and Amazon Linux):
 
 ```bash
-docker compose up --build
+cd telebot-host
+chmod +x run.sh
+./run.sh
+```
+
+On Windows (requires Docker Desktop):
+
+```powershell
+cd telebot-host
+.\deploy\bootstrap.ps1
 ```
 
 Frontend: http://localhost:3000
