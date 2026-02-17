@@ -109,12 +109,11 @@ install_docker
 
 # Choose compose command
 COMPOSE_CMD=""
-if docker compose version >/dev/null 2>&1; then
-  COMPOSE_CMD="docker compose"
-elif command -v docker-compose >/dev/null 2>&1; then
+if command -v docker-compose >/dev/null 2>&1; then
   COMPOSE_CMD="docker-compose"
+elif docker compose version >/dev/null 2>&1; then
+  COMPOSE_CMD="docker compose"
 else
-  # try to install docker-compose binary
   install_docker_compose_binary
   if command -v docker-compose >/dev/null 2>&1; then
     COMPOSE_CMD="docker-compose"
